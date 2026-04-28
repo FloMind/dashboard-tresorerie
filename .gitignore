@@ -1,0 +1,64 @@
+# ══════════════════════════════════════════════════════════════
+# FloMind Dashboard Tresorerie -- .gitignore
+# REGLE ABSOLUE : aucune donnee client reelle sur GitHub
+# ══════════════════════════════════════════════════════════════
+
+# ── Donnees clients reelles (JAMAIS sur GitHub) ───────────────
+data/real_*/
+data/client_*/
+data/*_reel*.xlsx
+data/*_production*.xlsx
+*.csv
+exports/
+
+# ── Generateurs (usage interne seulement) ─────────────────────
+generators/
+
+# ── Secrets et configuration locale ──────────────────────────
+.streamlit/secrets.toml
+.env
+*.env.*
+config/local_*.py
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+
+# ── Virtual environments ──────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Streamlit cache local ─────────────────────────────────────
+.streamlit/cache/
+
+# ── Ce qui EST versionne (donnees demo synthetiques) ──────────
+# data/treso_flux.xlsx          OK -- donnees synthetiques
+# data/treso_soldes.xlsx        OK
+# data/treso_bfr.xlsx           OK
+# data/balance_client.xlsx      OK
+# data/balance_fournisseur.xlsx OK
+# data/stock_detail.xlsx        OK
+# data/ref_catalogue.xlsx       OK
