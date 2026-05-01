@@ -2,7 +2,6 @@
 """views/flux.py"""
 import streamlit as st
 from components.styles import section, CARD_COLORS
-from components.aide import aide_expander
 import pandas as pd
 from components.charts import (
     chart_waterfall, chart_flux_mensuel,
@@ -95,4 +94,3 @@ def render(loader) -> None:
                     .rename(columns={"site_id":"ID","site_nom":"Site","profil":"Profil"}),
                     use_container_width=True, hide_index=True)
 
-    aide_expander("flux")

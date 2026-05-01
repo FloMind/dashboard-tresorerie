@@ -2,7 +2,6 @@
 """views/alertes.py"""
 import streamlit as st
 from components.styles import section, CARD_COLORS, alert_counters, alert_item
-from components.aide import aide_expander
 import plotly.graph_objects as go
 from components.charts import chart_score_risque
 from components.formatters import fmt_eur
@@ -180,4 +179,3 @@ def render(loader) -> None:
                 st.session_state["alertes_show_all"] = False
                 st.rerun()
 
-    aide_expander("alertes")

@@ -23,6 +23,7 @@ inject()
 from core.loader import build_loader
 from components.kpi_cards import render_header_kpis
 from components.styles import section, CARD_COLORS
+from components.aide import aide_expander
 from utils.auth import check_auth
 from config.settings import MOIS_COURANT_LABEL
 
@@ -205,6 +206,18 @@ with st.sidebar:
         '</div>',
         unsafe_allow_html=True,
     )
+
+# ── Aide contextuelle — au-dessus des KPI cards ──────────────────────────
+VUE_AIDE = {
+    "Tour de controle":    "position",
+    "Flux de tresorerie":  "flux",
+    "BFR":                 "bfr",
+    "Alertes reseau":      "alertes",
+    "Budget & Pilotage":   "budget",
+    "Previsionnel":        "previsionnel",
+}
+if vue in VUE_AIDE:
+    aide_expander(VUE_AIDE[vue])
 
 # ── Header KPIs ─────────────────────────────────────────────────────────
 kpis = loader.kpi_global()

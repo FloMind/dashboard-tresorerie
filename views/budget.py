@@ -3,7 +3,6 @@
 import streamlit as st
 import pandas as pd
 from components.styles import section, CARD_COLORS
-from components.aide import aide_expander
 from components.charts import chart_budget_ecart, chart_budget_mensuel
 from components.formatters import fmt_eur
 
@@ -254,4 +253,3 @@ def render(loader) -> None:
                 use_container_width=True, hide_index=True,
             )
 
-    aide_expander("budget")

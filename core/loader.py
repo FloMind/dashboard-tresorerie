@@ -200,6 +200,29 @@ class TresoLoader:
         m_min   = max(0, m_max - 11)
         return fx_reel[fx_reel["periode_idx"].between(m_min, m_max)]
 
+    def _flux_net_par_site_courant(self) -> pd.Series:
+        """
+        Flux net du mois courant PAR SITE, calculé depuis flux_raw (source unique).
+
+        Remplace la colonne flux_net de treso_soldes.xlsx pour garantir la cohérence
+        avec la vue Flux trésorerie.
+
+        Contexte du bug : treso_soldes.xlsx::flux_net et SUM(treso_flux.xlsx::montant)
+        peuvent diverger si le générateur les a produits avec une logique différente
+        (ex. flux de régularisation de fin de période inclus dans l'un mais pas l'autre).
+        Cette méthode impose flux_raw comme source de vérité unique.
+        """
+        fx_cur = self.flux_raw[self.flux_raw["mois_label"] == self._mois_courant]
+        return fx_cur.groupby("site_id")["montant"].sum().rename("flux_net_computed")
+
+    def _flux_net_reseau_mois(self, mois_label: str) -> float:
+        """
+        Flux net réseau consolidé pour un mois donné, calculé depuis flux_raw.
+        Utilisé pour kpi_global() et les deltas M-1 — source unique.
+        """
+        fx = self.flux_raw[self.flux_raw["mois_label"] == mois_label]
+        return float(fx["montant"].sum())
+
     # -------------------------------------------------------------------------
     # NOUVEAUX KPIs : POINT MORT TRESORERIE + CASH CONVERSION RATIO
     # -------------------------------------------------------------------------
@@ -299,9 +322,13 @@ class TresoLoader:
         fx      = self.flux_raw
         cur_idx = self.mois_courant_idx
 
-        # Solde reseau consolide + flux net mois courant
+        # Solde reseau consolide
         solde_reseau = sol["solde_fin"].sum()
-        flux_courant = sol["flux_net"].sum()
+
+        # Flux net mois courant — source unique : flux_raw
+        # (évite la divergence avec treso_soldes.xlsx::flux_net si les générateurs
+        # ont produit des valeurs légèrement différentes, ex. 03/2026 : -669 vs -643 k€)
+        flux_courant = self._flux_net_reseau_mois(self._mois_courant)
 
         # Flux net YTD (annee du mois courant)
         an_courant = int(self._mois_courant.split()[-1])
@@ -351,8 +378,8 @@ class TresoLoader:
         if mois_m1:
             sol_m1        = self.soldes_raw[self.soldes_raw["mois_label"] == mois_m1]["solde_fin"].sum()
             delta_solde   = solde_reseau - sol_m1
-            sol_m1_df     = self.soldes_raw[self.soldes_raw["mois_label"] == mois_m1]
-            delta_flux    = flux_courant - sol_m1_df["flux_net"].sum()
+            # delta_flux : source unique flux_raw pour cohérence avec vue Flux
+            delta_flux    = flux_courant - self._flux_net_reseau_mois(mois_m1)
         else:
             delta_solde = 0.0
             delta_flux  = 0.0
@@ -392,6 +419,14 @@ class TresoLoader:
             return "vert"
 
         sol_cur = sol_cur.copy()
+
+        # Recalcul flux_net depuis flux_raw — source unique, cohérent avec vue Flux.
+        # Corrige la divergence treso_soldes::flux_net vs SUM(treso_flux::montant).
+        flux_by_site = self._flux_net_par_site_courant()
+        sol_cur = sol_cur.merge(flux_by_site, on="site_id", how="left")
+        sol_cur["flux_net"] = sol_cur["flux_net_computed"].fillna(sol_cur["flux_net"])
+        sol_cur = sol_cur.drop(columns=["flux_net_computed"])
+
         sol_cur["rag"] = sol_cur.apply(rag, axis=1)
         sol_cur = sol_cur.sort_values("solde_fin")
 

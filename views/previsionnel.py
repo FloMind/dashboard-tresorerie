@@ -2,7 +2,6 @@
 """views/previsionnel.py — Vue Prévisionnel."""
 import streamlit as st
 from components.styles import section, CARD_COLORS
-from components.aide import aide_expander
 import pandas as pd
 from core.forecaster import TresoForecaster
 from components.charts import chart_forecast, chart_forecast_composantes
@@ -155,4 +154,3 @@ Contrairement à une extrapolation globale du solde, ce forecast utilise **la lo
 Intervalle de confiance 80% basé sur les résidus historiques des encaissements (z = 1.28, croissant avec l'horizon).
 """)
 
-    aide_expander("previsionnel")

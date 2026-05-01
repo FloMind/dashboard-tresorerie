@@ -4,7 +4,6 @@ Ajout : filtre site (perimetre site specifique ou reseau consolide).
 """
 import streamlit as st
 from components.styles import section, CARD_COLORS
-from components.aide import aide_expander
 import pandas as pd
 from components.charts import chart_aging_donut, chart_bfr_evolution
 from components.formatters import fmt_eur, fmt_jours
@@ -176,4 +175,3 @@ def render(loader) -> None:
             else:
                 st.success("Aucun depassement fournisseur sur ce perimetre.")
 
-    aide_expander("bfr")

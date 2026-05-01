@@ -33,22 +33,6 @@ def _tip(texte, couleur="#1D4ED8", fond="#EFF6FF"):
     )
 
 
-def _script_bloc(duree, titre, couleur, texte):
-    """Bloc script de présentation — sans emoji dans le titre."""
-    st.markdown(
-        f'<div style="border:1px solid #E2E8F0;border-radius:10px;'
-        f'overflow:hidden;margin-bottom:10px">'
-        f'<div style="background:{couleur}14;border-bottom:1px solid #E2E8F0;'
-        f'padding:10px 16px;display:flex;justify-content:space-between;align-items:center">'
-        f'<span style="font-size:13px;font-weight:700;color:#0F172A">{titre}</span>'
-        f'<span style="font-size:11px;font-weight:600;color:{couleur};'
-        f'background:{couleur}18;padding:3px 10px;border-radius:20px">{duree}</span>'
-        f'</div>'
-        f'<div style="padding:14px 16px;font-size:13px;color:#374151;'
-        f'line-height:1.7;font-style:italic">{texte}</div>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
 
 
 def _glossaire_terme(terme, formule, definition, benchmark=""):
@@ -121,9 +105,8 @@ def render(loader=None):
         unsafe_allow_html=True,
     )
 
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab3 = st.tabs([
         "Les 7 vues",
-        "Script de présentation",
         "KPIs & Méthodes",
         "Glossaire",
     ])
@@ -254,113 +237,18 @@ def render(loader=None):
         st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
         _vue_badge("Guide d'utilisation", "#64748B",
-                   "Documentation · Script de présentation · KPIs · Glossaire")
+                   "Documentation · KPIs & Méthodes · Glossaire")
         with st.container(border=True):
             st.markdown(
                 "Cette page. "
-                "**4 onglets** : les 7 vues documentées, le script de présentation "
                 "(12–15 min), la documentation des KPIs et méthodes, "
                 "le glossaire complet."
             )
 
     # ══════════════════════════════════════════════════════════════
-    # TAB 2 — SCRIPT DE PRÉSENTATION
+    # TAB 2 — KPIs & MÉTHODES
     # ══════════════════════════════════════════════════════════════
     with tab2:
-
-        st.markdown(
-            '<div style="background:#F0FDF4;border-radius:8px;padding:14px 18px;'
-            'margin-bottom:16px;font-size:13px;color:#166534">'
-            '<strong>Durée : 12 à 15 minutes.</strong> '
-            'Ordre recommandé : Alertes → Position → BFR → Budget → Prévisionnel. '
-            'DAF = commencer par les KPIs header · DG = commencer par les alertes.</div>',
-            unsafe_allow_html=True,
-        )
-
-        _script_bloc(
-            "1 min", "Ouverture", "#1D4ED8",
-            "\"Je vais vous montrer ce qu'on verrait si on travaillait ensemble. "
-            "J'ai simulé un réseau de 30 sites négoce B2B similaire au vôtre, "
-            "avec les paramètres typiques du secteur en Auvergne-Rhône-Alpes. "
-            "Tout ce que vous allez voir serait généré automatiquement "
-            "depuis votre Sage 100 — sans saisie manuelle, sans Excel.\""
-        )
-
-        _script_bloc(
-            "2 min", "Alertes réseau — la vue la plus percutante", "#DC2626",
-            "\"Première question que je pose à tout directeur de réseau : "
-            "quels sites demandent votre attention cette semaine ? "
-            "Vous avez ici un score de risque consolidé sur 100. "
-            "Lyon est à 74 — il cumule des retards clients importants, "
-            "un stock dormant et une trésorerie sous le seuil critique. "
-            "Est-ce que vos équipes le voient aussi clairement, aujourd'hui, le 1er du mois ? "
-            "La couverture CT est à 0,82x — ce site ne couvre pas ses dettes court terme. "
-            "C'est le signal d'alerte qu'on détecte généralement après coup.\""
-        )
-
-        _script_bloc(
-            "3 min", "Position réseau", "#1D4ED8",
-            "\"Voilà l'état de la trésorerie réseau ce mois. "
-            "9 sites sur 30 sont en solde négatif. "
-            "S22 est à 3 200 € avec un runway de 0,1 mois — "
-            "ce site passe en découvert d'ici quelques jours sans action. "
-            "La heatmap montre que ce n'est pas un accident : "
-            "regardez octobre et novembre 2024, ce même profil de tension. "
-            "Sans outil de pilotage, ça se découvre lors de la clôture mensuelle, "
-            "quand il est trop tard pour agir sans frais financiers.\""
-        )
-
-        _script_bloc(
-            "3 min", "BFR — où est votre argent", "#059669",
-            "\"DSO à 47 jours en moyenne réseau. "
-            "Pour 45 M€ de CA, chaque journée supplémentaire = "
-            "125 000 € immobilisés dans vos créances. "
-            "Ce client ici — 46 000 € en retard de 90 jours. "
-            "Il n'apparaît probablement pas en page 1 de votre reporting actuel. "
-            "Sur la concentration : ce site à Bourg-en-Bresse, "
-            "son top 3 clients représente 61% de son CA. "
-            "Si l'un d'eux ralentit, ce site est en difficulté dans les 30 jours. "
-            "C'est exactement le risque qu'on ne voit pas dans Excel.\""
-        )
-
-        _script_bloc(
-            "2 min", "Budget & Pilotage", "#D97706",
-            "\"Taux de réalisation CA à 94% — légèrement sous l'objectif. "
-            "L'écart vient des encaissements : on a facturé conformément au budget, "
-            "mais encaissé avec retard. "
-            "Ce n'est pas un problème commercial — c'est un problème de recouvrement. "
-            "La bonne nouvelle : cet argent existe, il n'est pas encore dans le compte. "
-            "Le forecast va vous montrer dans combien de temps il y arrive.\""
-        )
-
-        _script_bloc(
-            "3 min", "Prévisionnel — la conclusion", "#0891B2",
-            "\"Scénario optimiste à +10% d'encaissements : "
-            "le solde passe de 6,2 M€ à 11,7 M€ sur 6 mois. "
-            "Ce sont 5,5 M€ récupérés sans emprunter un euro, "
-            "juste en encaissant plus vite ce qui vous est déjà dû. "
-            "Scénario pessimiste avec DSO +12 jours : 5,1 M€. "
-            "La ligne pointillée, c'est votre objectif budget. "
-            "Le scénario base la rejoint en septembre. "
-            "Votre objectif : rester dans la moitié haute de cette fourchette.\""
-        )
-
-        _script_bloc(
-            "1 min", "Clôture", "#1D4ED8",
-            "\"Ce dashboard, vos équipes CDG pourraient l'avoir "
-            "le 1er de chaque mois avec vos vraies données. "
-            "On branche ça sur votre Sage 100 : "
-            "extraction automatique, zéro saisie, "
-            "30 sites pilotés en 20 minutes "
-            "au lieu d'une journée de consolidation Excel. "
-            "La prochaine étape : un diagnostic sur vos données réelles — "
-            "2 heures, et vous voyez exactement où en est votre réseau.\""
-        )
-
-    # ══════════════════════════════════════════════════════════════
-    # TAB 3 — KPIs & MÉTHODES
-    # ══════════════════════════════════════════════════════════════
-    with tab3:
 
         c1, c2 = st.columns(2, gap="large")
 
@@ -459,9 +347,9 @@ def render(loader=None):
                 )
 
     # ══════════════════════════════════════════════════════════════
-    # TAB 4 — GLOSSAIRE
+    # TAB 3 — GLOSSAIRE
     # ══════════════════════════════════════════════════════════════
-    with tab4:
+    with tab3:
 
         cg, cd = st.columns(2, gap="large")
 

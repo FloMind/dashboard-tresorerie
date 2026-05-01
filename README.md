@@ -13,13 +13,15 @@ Dashboard de pilotage de la trésorerie conçu pour des réseaux de PME négoce 
 
 | Vue | Contenu |
 |-----|---------|
-| **Tour de contrôle** | KPIs header, soldes bancaires, runway, heatmap sites × mois, incidents prioritaires |
+| **Tour de contrôle** | Statut global réseau, décomposition BFR (créances / stocks / dettes), structure du flux mensuel, évolution solde 28 mois |
 | **Flux** | Waterfall mensuel, barchart empilé 28 mois, comparaison N vs N-1 dynamique |
 | **BFR** | DSO/DPO/DIO/CCC vs benchmarks, aging balance clients, stock ABC, fournisseurs |
 | **Alertes** | Score de risque 0–100 par site, feed filtrable, répartition par type |
 | **Budget & Pilotage** | Budget vs Réalisé YTD, écarts par poste, concentration clients (HHI) |
 | **Prévisionnel** | Rolling forecast WLS + saisonnalité N-1, 3 scénarios, IC 80%, ligne budget cible |
-| **Guide d'utilisation** | Documentation, script de présentation 12 min, KPIs & méthodes, glossaire |
+| **Guide d'utilisation** | Documentation des 7 vues, KPIs & méthodes, glossaire |
+
+**Principe UX :** chaque vue affiche un expander "Comment lire cette vue ?" en haut de page, avant les indicateurs. La Tour de contrôle est 100% macro — aucun détail site, lecture DG en 30 secondes.
 
 ---
 
@@ -42,7 +44,7 @@ Dashboard de pilotage de la trésorerie conçu pour des réseaux de PME négoce 
 
 ## Forecast — méthode
 
-Contrairement aux outils qui extrapolent le solde global (Agicap, Fygr), le forecast raisonne **composante par composante** :
+Le forecast raisonne **composante par composante** plutôt qu'en extrapolant le solde global :
 
 | Composante | Méthode |
 |------------|---------|
@@ -94,32 +96,34 @@ Sous Windows : double-cliquer sur `lancer.bat` (crée le venv automatiquement, d
 ```
 dashboard-tresorerie/
 │
-├── app.py                        ← Point d'entrée — sidebar, routing, bannière critique,
-│                                   narratif auto
+├── app.py                        ← Point d'entrée — sidebar, routing, aide contextuelle
+│                                   centralisée, bannière critique, narratif auto
 ├── config/
 │   └── settings.py               ← Couleurs RAG, benchmarks sectoriels, mois courant
 │
 ├── core/
 │   ├── loader.py                 ← KPIs, agrégats, BFR, budget vs réalisé,
 │   │                               concentration_clients(), narrative()
+│   │                               Source unique : flux_net calculé depuis treso_flux.xlsx
 │   ├── forecaster.py             ← Rolling forecast WLS — 8 composantes
 │   └── data_source.py            ← Abstraction V1 Excel / V1.5 SQL / V2 API
 │
 ├── components/
 │   ├── styles.py                 ← CSS global — typographie, cards, sidebar, tables
-│   ├── kpi_cards.py              ← Header 6 KPIs custom
+│   ├── kpi_cards.py              ← Header 6 KPIs custom (affiché sur toutes les vues)
 │   ├── charts.py                 ← 11 graphiques Plotly
 │   ├── formatters.py             ← M€/k€/€, badges HTML, RAG
-│   └── aide.py                   ← Aide contextuelle — expanders par vue
+│   └── aide.py                   ← Aide contextuelle — gérée centralement dans app.py
 │
 ├── views/
-│   ├── position.py               ← Soldes, runway, heatmap, incidents
+│   ├── position.py               ← Tour de contrôle macro : statut réseau, BFR décomposé,
+│   │                               structure flux — aucun détail site
 │   ├── flux.py                   ← Waterfall, barchart, N vs N-1
 │   ├── bfr.py                    ← Ratios, aging, stock ABC, fournisseurs
 │   ├── alertes.py                ← Score risque, feed, donut
 │   ├── budget.py                 ← Budget vs Réalisé, écarts, concentration clients
 │   ├── previsionnel.py           ← Forecast 3 scénarios, IC 80%, ligne budget
-│   └── guide.py                  ← Documentation, script présentation, glossaire
+│   └── guide.py                  ← Documentation 7 vues, KPIs & méthodes, glossaire
 │
 ├── utils/
 │   ├── auth.py                   ← Authentification bcrypt (désactivée en démo)
@@ -135,7 +139,7 @@ dashboard-tresorerie/
 
 ## Données synthétiques
 
-Toutes les données sont **entièrement synthétiques** — générées par les scripts dans `generators/` (non versionnés). Aucune donnée réelle ne doit être committée.
+Toutes les données sont **100% fictives** — générées algorithmiquement par les scripts dans `generators/` (non versionnés) pour simuler un réseau de négoce B2B plausible. Aucune donnée réelle, client ou entreprise identifiable n'est présente dans ce dépôt. Aucune donnée réelle ne doit être committée.
 
 | Fichier | Lignes | Description |
 |---------|--------|-------------|
